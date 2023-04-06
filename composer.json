@@ -1,0 +1,15 @@
+{
+    "name": "gabriel/basic_validator",
+    "autoload": {
+        "psr-4": {
+            "BasicValidator\\": "Validator/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gabriel Vitor",
+            "email": "git624886@gmail.com"
+        }
+    ],
+    "require": {}
+}
