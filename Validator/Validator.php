@@ -51,8 +51,23 @@ class Validator
           'string' => $this->validatorString->validator($userField, $fieldParams),
         };
 
-        if (is_array($resultVerify))
-          throw new \Exception('Dado inválido: Field: ' . $resultVerify['userField'] . ' - ' . $resultVerify['fieldVerify'], 400);
+        if (is_array($resultVerify)) {
+
+          if ($this->returnType == 'default') {
+            $message = 'Dado inválido: Field: ' . $resultVerify['userField'] . ' - ' . $resultVerify['fieldVerify'];
+            throw new \Exception($message, 400);
+          }
+
+          $message = json_encode([
+            'error' => 'dados inválidos',
+            'data' => [
+              'field' => $resultVerify['userField'],
+              'expected' => $resultVerify['fieldVerify']
+            ]
+          ]);
+
+          throw new \Exception($message, 400);
+        }
       }
     }
 
