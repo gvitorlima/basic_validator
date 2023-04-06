@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BasicValidator\ValidatorClasses;
+namespace Validators\Classes;
 
 class String_
 {

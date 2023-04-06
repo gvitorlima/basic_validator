@@ -2,7 +2,7 @@
     "name": "gabriel/basic_validator",
     "autoload": {
         "psr-4": {
-            "BasicValidator\\": "Validator/"
+            "Validators\\": "src/"
         }
     },
     "authors": [

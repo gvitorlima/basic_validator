@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BasicValidator\ValidatorClasses;
+namespace Validators\Classes;
 
-use BasicValidator\ValidatorClasses\String_;
+use Validators\Classes\String_;
 
 class Especial_
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace BasicValidator;
+namespace Validators;
 
-use BasicValidator\ValidatorClasses\Especial_;
-use BasicValidator\ValidatorClasses\String_;
+use Validators\Classes\Especial_;
+use Validators\Classes\String_;
 
 class Validator
 {
