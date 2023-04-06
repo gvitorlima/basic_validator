@@ -41,12 +41,15 @@ class String_
 
   public function min(mixed $userField, int $min): array|bool
   {
-    $this->string($userField);
+    $verify = $this->string($userField);
+    if (isset($verify))
+      return $verify;
+
     if (strlen($userField) < $min)
       return [
         'error' => "Parâmetro inválido - $userField",
         'field' => [
-          'expected' => $userField . ' - ' . $min,
+          'expected' => 'min - ' . $min,
           'passed' => strlen($userField)
         ]
       ];
@@ -56,12 +59,16 @@ class String_
 
   public function max(mixed $userField, int $max)
   {
+    $verify = $this->string($userField);
+    if (isset($verify))
+      return $verify;
+
     $this->string($userField);
     if (strlen($userField) > $max)
       return [
         'error' => "Parâmetro inválido - $userField",
         'field' => [
-          'expected' => $userField . ' - ' . $max,
+          'expected' => 'max - ' . $max,
           'passed' => strlen($userField)
         ]
       ];
