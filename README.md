@@ -5,7 +5,7 @@ Um validator básico criado apenas para fins de estudo. Incompleto, porém vai a
 ## Validator - Como usar
 
 O validator é instanciado de forma estática através do método `Validator::validate`. O mesmo recebe um `array` como parâmetro e retorna apenas `true`. Qualquer erro de validação é retornada uma `Exception`.
-> Obs: Por enquanto a mensagem de erro está fixa para cada validação. 
+> Obs: Por enquanto a mensagem de erro está fixa para cada validação.
 
 > TODO - Retornar apenas o campo em que a validação falhou, tal como o possível parâmetro de verificação que causou o erro.
 
@@ -30,7 +30,8 @@ Os diferentes tipos de verificação são divididas através de dois pontos `:`,
 > TODO -Listar todas as verificações possíveis tal como implementar oque falta.
 
 ### TODO - Implementações
-**ESPECIAL**
+
+__ESPECIAL__
 
 require,
 date time,
@@ -39,14 +40,14 @@ null,
 boolean,
 instance
 
-**STRING**
+__STRING__
 
 length,
 email,
 min,
 max
 
-**INTEGER**
+__INTEGER__
 
 length,
 positive,
