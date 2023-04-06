@@ -23,7 +23,7 @@ Validator::validate([
 ]);
 ```
 
-Os diferentes tipos de verificação é são divididas através de dois pontos `:`, todo e qualquer parâmetro que os mesmos possuam é colocado afrente do tipo de verificação dentro de colchetes `[]`.
+Os diferentes tipos de verificação são divididas através de dois pontos `:`, todo e qualquer parâmetro que os mesmos possuam é colocado afrente do tipo de verificação dentro de colchetes `[]`.
 
 > Obs: Todos os parâmetros são independentes de qualquer outro, logo, caso vc informe um valor/tamanho mínimo, não será necessário informar um tamanho máximo para o mesmo.
 
