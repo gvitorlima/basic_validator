@@ -1,42 +1,70 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BasicValidator\ValidatorClasses;
 
 class String_
 {
-  public function validator(mixed $userField, array|string $params = null): array|bool
-  {
-    if (!is_string($userField))
-      return ['userField' => $userField, 'fieldVerify' => 'string'];
+  private static self $instance;
 
-    if (is_string($params))
+  private array $params;
+
+  private function __construct()
+  {
+  }
+
+  public static function create()
+  {
+    if (!isset(self::$instance))
+      self::$instance = new self;
+
+    return self::$instance;
+  }
+
+  public function string(mixed $userField): array|bool
+  {
+    if (!is_string($userField) || strlen($userField) == 0)
+      return [
+        'error' => 'Parâmetro inválido.',
+        'field' => [
+          'expected' => 'string',
+          'passed' => ''
+        ]
+      ];
+
+    if (is_string($userField))
       return true;
 
-    foreach ($params as $param => $value) {
-      $resultVerify = match ($param) {
-        'min' => $this->min($userField, $value),
-        'max' => $this->max($userField, $value),
-      };
+    return [];
+  }
 
-      if (!is_bool($resultVerify))
-        return $resultVerify;
-    }
+  public function min(mixed $userField, int $min): array|bool
+  {
+    $this->string($userField);
+    if (strlen($userField) < $min)
+      return [
+        'error' => "Parâmetro inválido - $userField",
+        'field' => [
+          'expected' => $userField . ' - ' . $min,
+          'passed' => strlen($userField)
+        ]
+      ];
 
     return true;
   }
 
-  private function min(string $field, int $min): array|bool
+  public function max(mixed $userField, int $max)
   {
-    if (strlen($field) < $min)
-      return ['userField' => $field, 'fieldVerify' => "min: $min, passed: " . strlen($field)];
-
-    return true;
-  }
-
-  private function max(string $field, int $max)
-  {
-    if (strlen($field) > $max)
-      return ['userField' => $field, 'fieldVerify' => "max: $max, passed: " . strlen($field)];
+    $this->string($userField);
+    if (strlen($userField) > $max)
+      return [
+        'error' => "Parâmetro inválido - $userField",
+        'field' => [
+          'expected' => $userField . ' - ' . $max,
+          'passed' => strlen($userField)
+        ]
+      ];
 
     return true;
   }
