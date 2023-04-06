@@ -36,19 +36,19 @@ class Validator
   {
     try {
 
-    if (!isset(self::$instance))
-      self::$instance = new self;
+      if (!isset(self::$instance))
+        self::$instance = new self;
 
-    self::$instance->setVerificationData($dataValidate);
-    self::$instance->organizeParamsVerify();
+      self::$instance->setVerificationData($dataValidate);
+      self::$instance->organizeParamsVerify();
 
-    foreach (self::$instance->verificationData as $data => $fields) {
-      $error = self::$instance->verify($data, $fields);
-      if (!is_bool($error))
-        return $error;
-    }
+      foreach (self::$instance->verificationData as $data => $fields) {
+        $error = self::$instance->verify($data, $fields);
+        if (!is_bool($error))
+          return $error;
+      }
 
-    return true;
+      return true;
     } catch (\Throwable $err) {
       if (self::$returnType == 'json') {
         $return = [
@@ -110,7 +110,7 @@ class Validator
     return $organizeFields;
   }
 
-  private function verify(string $verify, array $fields)
+  private function verify(string $verify, array $fields): array|bool
   {
     foreach ($fields as $field => $params) {
       $verifyReturn = match ($field) {
@@ -136,10 +136,13 @@ class Validator
           'field' => $verifyReturn['field']
         ];
       }
+      continue;
     }
+
+    return true;
   }
 
-  private function validatorString(mixed $field, array $params = null)
+  private function validatorString(mixed $field, array $params = null): array|bool
   {
     if (isset($params)) {
       foreach ($params as $param => $value) {
@@ -155,13 +158,15 @@ class Validator
             'field' => $verifyReturn['field']
           ];
       }
+    } else {
+      $verifyReturn = $this->objValString->string($field);
+      if (!is_bool($verifyReturn))
+        return [
+          'error' => $verifyReturn['error'],
+          'field' => $verifyReturn['field']
+        ];
     }
 
-    $verifyReturn = $this->objValString->string($field);
-    if (!is_bool($verifyReturn))
-      return [
-        'error' => $verifyReturn['error'],
-        'field' => $verifyReturn['field']
-      ];
+    return true;
   }
 }
