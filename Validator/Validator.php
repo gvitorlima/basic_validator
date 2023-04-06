@@ -64,8 +64,8 @@ class Validator
     if (is_string($data)) {
       $this->returnType = 'json';
 
-      return is_null(json_decode($data)) ? throw new \Exception("String não pode ser decodada, expected type: $this->returnType.", 400)
-        : json_decode($data);
+      return is_null(json_decode($data, true)) ? throw new \Exception("String não pode ser decodada, expected type: $this->returnType.", 400)
+        : json_decode($data, true);
     }
 
     $this->returnType = 'default';
