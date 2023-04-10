@@ -17,16 +17,39 @@ class Especial_
 
   public function require(mixed $field): array|bool
   {
-    if (is_null($field) || empty($field) || strlen($field) == 0)
-      return [
-        'error' => "Parâmetro inválido - $field",
-        'field' => [
-          'expected' => $field,
-          'passed' => ''
-        ]
-      ];
+    $verify = match ($field) {
+      (strlen($field) == 0) => 'null',
+      is_null($field) => 'null',
+      empty($field)   => 'empty',
+
+      default => false
+    };
+
+    if (is_string($verify)) {
+      $error = ['error' => "Parâmetro inválido - $field", 'field' => ['expected' => $field, 'passed' => $verify]];
+      throw new \Exception(json_encode($error), 500);
+    }
 
     return true;
+  }
+
+  public function email(mixed $field, int $min = null, int $max = null)
+  {
+    $verify = $this->objValString->string($field);
+    if (!is_bool($verify)) {
+      $error = ['error' => 'Email não é do tipo string', 'field' => ['expected' => 'string', 'passed' => '']];
+      throw new \Exception(json_encode($error), 500);
+    }
+
+    if (preg_match_all('/^(.*?)@/', $field, $matches)) {
+      $email = end($matches)[0];
+
+      if (isset($min) || isset($max)) {
+        // $verify = $this->objValString->min($email, $min ?? );
+      }
+      // if (str_starts_with())
+    }
+    exit;
   }
 
   public function uuid(mixed $uuid)

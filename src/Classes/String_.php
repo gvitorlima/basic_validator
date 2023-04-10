@@ -22,56 +22,41 @@ class String_
     return self::$instance;
   }
 
-  public function string(mixed $userField): array|bool
+  public function string(mixed $userField): bool
   {
-    if (!is_string($userField) || strlen($userField) == 0)
-      return [
-        'error' => 'Parâmetro inválido.',
-        'field' => [
-          'expected' => 'string',
-          'passed' => ''
-        ]
-      ];
-
-    if (is_string($userField))
+    if (empty($userField) || is_null($userField) || is_bool($userField))
       return true;
 
-    return [];
-  }
-
-  public function min(mixed $userField, int $min): array|bool
-  {
-    $verify = $this->string($userField);
-    if (isset($verify))
-      return $verify;
-
-    if (strlen($userField) < $min)
-      return [
-        'error' => "Parâmetro inválido - $userField",
-        'field' => [
-          'expected' => 'min - ' . $min,
-          'passed' => strlen($userField)
-        ]
-      ];
+    if (!is_string($userField) || strlen($userField) == 0) {
+      $error =  ['error' => 'Parâmetro inválido.', 'field' => ['expected' => 'string', 'passed' => '']];
+      throw new \Exception(json_encode($error), 500);
+    }
 
     return true;
   }
 
-  public function max(mixed $userField, int $max)
+  public function min(mixed $userField, int $min): bool
   {
-    $verify = $this->string($userField);
-    if (isset($verify))
-      return $verify;
+    if (empty($userField) || is_null($userField) || is_bool($userField))
+      return true;
 
-    $this->string($userField);
-    if (strlen($userField) > $max)
-      return [
-        'error' => "Parâmetro inválido - $userField",
-        'field' => [
-          'expected' => 'max - ' . $max,
-          'passed' => strlen($userField)
-        ]
-      ];
+    if (strlen($userField) < $min) {
+      $error = ['error' => "Parâmetro inválido - $userField", 'field' => ['expected' => 'min - ' . $min, 'passed' => strlen($userField)]];
+      throw new \Exception(json_encode($error), 500);
+    }
+
+    return true;
+  }
+
+  public function max(mixed $userField, int $max): bool
+  {
+    if (empty($userField) || is_null($userField) || is_bool($userField))
+      return true;
+
+    if (strlen($userField) > $max) {
+      $error = ['error' => "Parâmetro inválido - $userField", 'field' => ['expected' => 'max - ' . $max, 'passed' => strlen($userField)]];
+      throw new \Exception(json_encode($error), 500);
+    }
 
     return true;
   }
