@@ -1,3 +1,7 @@
+Projeto pausado para fins de estudo.
+
+---
+
 ## BASIC_VALIDATOR
 
 Um validator básico criado apenas para fins de estudo. Incompleto, porém vai abaixo a implementação.
