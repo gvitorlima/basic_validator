@@ -7,6 +7,8 @@ namespace Validators;
 use Validators\Classes\Especial_;
 use Validators\Classes\String_;
 
+include_once __DIR__ . '/Params.php';
+
 class Validator
 {
   private static self $instance;
@@ -16,13 +18,18 @@ class Validator
   private String_ $objValString;
 
   private array
-    $dataForVerification,
-    $mandatoryParams = [
-      'string'
-    ];
+    $dataForVerification;
+
+  /**
+   * Array que serve para organizar os parâmetros por tipo.
+   */
+  private static array $especialParams, $mandatoryParams;
 
   private function __construct()
   {
+    self::$especialParams = especialParams();
+    self::$mandatoryParams = mandatoryParams();
+
     $this->objValEspecial = new Especial_;
     $this->objValString = String_::create();
   }
@@ -31,24 +38,19 @@ class Validator
   {
   }
 
-  public static function validate(string|array $dataValidate): bool|string|array
+  public static function validate(string|array $dataValidate): bool
   {
+    if (!isset(self::$instance)) {
+      self::$instance = new self;
+    }
+
+    self::$instance->setVerificationData($dataValidate);
+    self::$instance->organizeParams();
+
     try {
 
-      if (!isset(self::$instance))
-        self::$instance = new self;
-
-      self::$instance->setVerificationData($dataValidate);
-      self::$instance->organizeParamsVerify();
-
       foreach (self::$instance->dataForVerification as $data => $verificationParameters) {
-      }
-
-      foreach (self::$instance->dataForVerification as $data => $fields) {
-
-        $error = self::$instance->verify($data, $fields);
-        if (!is_bool($error))
-          return $error;
+        self::$instance->verify($data, $verificationParameters);
       }
 
       return true;
@@ -57,7 +59,6 @@ class Validator
       print_r($err->getMessage());
       echo '</pre>';
       exit;
-      return json_decode($err->getMessage(), true);
     }
   }
 
@@ -73,12 +74,14 @@ class Validator
   }
 
   /**
-   * Classe que mapeia o array pegando os parâmetros de verificação
+   * * Métodos que mapeiam os dados e parâmetros de verificação
    */
-  private function organizeParamsVerify(): void
+  private function organizeParams(): void
   {
     foreach ($this->dataForVerification as $fieldVerify => $params) {
       $params = $this->sliceFields($params);
+      $params = $this->especialParams($params);
+
       $this->dataForVerification[$fieldVerify] = $params;
     }
   }
@@ -102,57 +105,46 @@ class Validator
     return $organizeFields;
   }
 
-  private function verify(mixed $data, array $fields): array|bool
+  public function especialParams(array $params): array
   {
-    $mandatoryParam = array_filter($this->mandatoryParams, function ($param) use ($fields) {
-      return array_key_exists($param, $fields);
-    })[0];
-
-    if (!is_string($mandatoryParam)) {
-      $error = ['error' => 'Declare o tipo do parâmetro a ser verificado', 'field' => ['expected' => 'string|integer|bool|null', 'passed' =>  null]];
-      throw new \Exception(json_encode($error), 500);
+    $especialParams = [];
+    foreach (self::$especialParams as $_ => $param) {
+      if (key_exists($param, $params)) {
+        $especialParams['especial'][$param] = $params[$param];
+        unset($params[$param]);
+      }
     }
+    return array_merge($params, $especialParams);
+  }
 
-    $this->mandatoryParamVerify($data, $mandatoryParam);
-
+  /**
+   * * Métodos 
+   */
+  private function verify(mixed $data, array $fields): bool
+  {
+    $this->verifyMandatoryData($fields);
     if (key_exists('require', $fields)) {
       $this->objValEspecial->require($data);
       unset($fields['require']);
     }
 
-    match ($mandatoryParam) {
-      'string' => $this->validatorString($data, $fields['string'])
+    match ($fields) {
+      'string',
+      'especial',
+      'numeric'
     };
-
-    unset($fields[$mandatoryParam]);
-    echo '<pre>';
-    print_r($fields);
-    echo '</pre>';
-    exit;
-    // match ($fields)
-
     return true;
   }
 
-  private function mandatoryParamVerify(mixed $field, string $param)
+  private function verifyMandatoryData(array $fields): void
   {
-    return match ($param) {
-      'string' => $this->objValString->string($field),
-    };
-  }
+    $verify = array_filter(self::$mandatoryParams, function ($param) use ($fields) {
+      return array_key_exists($param, $fields);
+    })[0];
 
-  private function validatorString(mixed $data, array $fields): array|bool
-  {
-    foreach ($fields as $param => $value) {
-      match ($param) {
-        'length' => '',
-        'min' => $this->objValString->min($data, (int)$value),
-        'max' => $this->objValString->max($data, (int)$value),
-
-        default =>  throw new \Exception("Verificação inexistente, param: $param", 500)
-      };
+    if (!is_string($verify)) {
+      $error = ['error' => 'Declare o tipo do parâmetro a ser verificado', 'field' => ['expected' => 'string|integer|bool|null', 'passed' =>  null]];
+      throw new \Exception(json_encode($error), 500);
     }
-
-    return true;
   }
 }

@@ -5,14 +5,19 @@ declare(strict_types=1);
 namespace Validators\Classes;
 
 use Validators\Classes\String_;
+use Validators\Interfaces\CorrectCoffee;
 
-class Especial_
+class Especial_ implements CorrectCoffee
 {
   private String_ $objValString;
 
   public function __construct()
   {
     $this->objValString = String_::create();
+  }
+
+  public static function handleCorrectCoffee(array $fields, array $params = null)
+  {
   }
 
   public function require(mixed $field): array|bool
@@ -33,8 +38,13 @@ class Especial_
     return true;
   }
 
-  public function email(mixed $field, int $min = null, int $max = null)
+  public function email(string $field, int $min = null, int $max = null): bool
   {
+    echo '<pre>';
+    print_r($min);
+    echo '</pre>';
+    exit;
+
     $verify = $this->objValString->string($field);
     if (!is_bool($verify)) {
       $error = ['error' => 'Email não é do tipo string', 'field' => ['expected' => 'string', 'passed' => '']];
